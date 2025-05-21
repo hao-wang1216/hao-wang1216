@@ -44,10 +44,10 @@
 ### 📊 GitHub 数据 | GitHub Stats | Статистика GitHub
 
 <p align="center">
-  <img src="https://github-readme-stats.vercel.app/api?username=hao-wang&show_icons=true&theme=radical" alt="GitHub stats" />
+  <img src="https://github-readme-stats.vercel.app/api?username=hao-wang1216&show_icons=true&theme=radical" alt="GitHub stats" />
 </p>
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=hao-wang&theme=radical" alt="Streak stats" />
+  <img src="https://github-readme-streak-stats.herokuapp.com/?user=hao-wang1216&theme=radical" alt="Streak stats" />
 </p>
 ---
 
