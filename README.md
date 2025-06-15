@@ -22,7 +22,7 @@
 </p>
 ---
 
-### 🌐 联系我 | Let's Connect | Связаться
+### 🌐Let's Connect
 
 <p align="left">
   <a href="mailto:wh20051216wh@gmail.com"><img src="https://img.shields.io/badge/Gmail-D14836?style=for-the-badge&logo=gmail&logoColor=white" /></a>
@@ -30,6 +30,3 @@
 </p>
 ---
 
-⭐️ 欢迎关注我、为项目点星或发邮件打个招呼！  
-⭐️ Feel free to follow me, star a repo, or just drop a hi!  
-⭐️ Не стесняйтесь подписаться, поставить звезду репозиторию или написать мне письмо!
