@@ -1,11 +1,8 @@
-<h1 align="center">Hello
 <h3 align="center"> I'm Hao Wang
 <p align="center">🎓AI & CV learner 
 
 - 📫 **Contact**
   ✉️ wanghao051216@outlook.com
-
-### 📊 GitHub Stats
 
 <!-- <p align="center">
   <img src="https://github-readme-stats.vercel.app/api?username=hao-wang1216&show_icons=true&theme=radical" alt="GitHub stats" />
