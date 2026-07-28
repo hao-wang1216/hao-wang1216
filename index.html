@@ -1,189 +1,539 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Hao Wang</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-  <style type="text/css">
-    body {
-      margin: 3em auto 2em auto;
-      width: 1080px;
-      font-family: "Times New Roman", Lato, Verdana, Helvetica, sans-serif;
-      font-size: 14px;
-      background: #ffffff;
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #fbfcfe;
+      --line: #d9e2ec;
+      --text: #18212f;
+      --muted: #607086;
+      --accent: #1f4e79;
+      --accent-soft: #e8f0fb;
+      --shadow: 0 18px 42px rgba(24, 33, 47, 0.08);
     }
 
-    h2 {
-      margin-top: 30px;
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 16px;
+      line-height: 1.75;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
     }
 
     img {
-      border-radius: 5px;
+      max-width: 100%;
+      display: block;
+      border-radius: 10px;
+    }
+
+    .masthead {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      border-bottom: 1px solid #edf1f5;
+      backdrop-filter: blur(8px);
+    }
+
+    .masthead-inner {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 66px;
+      gap: 18px;
+    }
+
+    .brand {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 0.95rem;
+    }
+
+    .page-shell {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 36px 0 72px;
+      display: grid;
+      grid-template-columns: 220px minmax(0, 1fr);
+      gap: 30px;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 92px;
+      align-self: start;
+    }
+
+    .profile-box {
+      padding: 4px 0;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .profile-box img {
+      width: 128px;
+      margin: 0 auto 12px;
+      border-radius: 50%;
+      box-shadow: none;
+    }
+
+    .profile-box h1 {
+      margin: 0;
+      font-size: 1.42rem;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .profile-cn {
+      margin: 6px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .profile-role,
+    .profile-org {
+      margin: 8px 0 0;
+      color: var(--muted);
+      text-align: center;
+      font-size: 0.9rem;
+    }
+
+    .profile-links {
+      margin: 14px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .profile-links li {
+      margin: 8px 0;
+      color: var(--muted);
+      word-break: break-word;
+      font-size: 0.93rem;
+    }
+
+    .main-column {
+      min-width: 0;
+    }
+
+    .intro {
+      margin-bottom: 26px;
+      font-size: 1.04rem;
+    }
+
+    .content-section {
+      margin-top: 28px;
+    }
+
+    .content-section h2 {
+      margin: 0 0 12px;
+      font-size: 1.7rem;
+      line-height: 1.2;
+    }
+
+    .section-rule {
+      margin-bottom: 18px;
+      border-bottom: 1px solid #dfe7ef;
+    }
+
+    .content-section p,
+    .content-section li {
+      font-size: 1rem;
+    }
+
+    .content-section ul {
+      margin: 0;
+      padding-left: 22px;
+    }
+
+    .projects-wrap {
+      display: grid;
+      gap: 0;
+    }
+
+    .project-card {
+      display: grid;
+      grid-template-columns: minmax(360px, 470px) minmax(0, 1fr);
+      gap: 24px;
+      align-items: start;
+      padding: 20px 0 24px;
+      background: transparent;
+      border: 0;
+      border-bottom: 1px solid #dfe7ef;
+      border-radius: 0;
+      box-shadow: none;
+      opacity: 0;
+      transform: translateY(26px);
+      transition:
+        opacity 0.65s ease,
+        transform 0.65s ease;
+    }
+
+    .project-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .project-card:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+
+    .project-media {
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+
+    .project-media img {
+      width: 100%;
+      height: auto;
+      transition: transform 0.45s ease, filter 0.45s ease;
+    }
+
+    .project-card:hover .project-media img {
+      transform: scale(1.02);
+      filter: brightness(1.02);
+    }
+
+    .project-copy {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .project-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chip {
+      display: inline;
+      min-height: 0;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.96rem;
+      font-weight: 700;
+    }
+
+    .chip-year {
+      color: var(--accent);
+    }
+
+    .chip-status {
+      color: #4b5d73;
+      font-weight: 600;
+      font-style: italic;
+    }
+
+    .project-copy h3 {
+      margin: 0;
+      font-size: 1.28rem;
+      line-height: 1.35;
+    }
+
+    .project-authors {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .project-desc {
+      margin: 0;
+      color: #3f4d60;
+    }
+
+    .project-links {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .project-link {
+      display: inline;
+      min-width: 0;
+      min-height: 0;
+      padding: 0;
+      border-radius: 0;
+      border: 0;
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+      transition: color 0.25s ease;
+    }
+
+    .project-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 980px) {
+      .page-shell {
+        grid-template-columns: 1fr;
+        gap: 28px;
+      }
+
+      .sidebar {
+        position: static;
+      }
+
+      .profile-box img {
+        width: 124px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .project-card {
+        grid-template-columns: 1fr;
+      }
+
+      .project-media {
+        min-height: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .masthead-inner,
+      .page-shell {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .nav-links {
+        gap: 12px;
+      }
+
+      .profile-box {
+        padding: 20px 18px;
+      }
+
+      .project-card {
+        padding: 16px 0 20px;
+        gap: 16px;
+      }
+
+      .project-copy h3 {
+        font-size: 1.12rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition: none !important;
+        animation: none !important;
+      }
+
+      .project-card {
+        opacity: 1 !important;
+        transform: none !important;
+      }
     }
   </style>
 </head>
-
 <body>
+  <header class="masthead">
+    <div class="masthead-inner">
+      <div class="brand">Hao Wang</div>
+      <nav class="nav-links">
+        <a href="#about-me">About Me</a>
+        <a href="#education">Education</a>
+        <a href="#research-interests">Research Interests</a>
+        <a href="#news">News</a>
+        <a href="#projects">Projects</a>
+      </nav>
+    </div>
+  </header>
 
-<!-- ================== Header ================== -->
-<table align="center">
-  <tr>
-    <td align="center">
-      <img src="WangHao1.jpg" width="180">
-    </td>
+  <div class="page-shell">
+    <aside class="sidebar">
+      <div class="profile-box">
+        <img src="WangHao1.jpg" alt="Hao Wang portrait">
+        <h1>Hao Wang</h1>
+        <p class="profile-cn">王昊</p>
+        <!-- <p class="profile-role">Researcher / Undergraduate Student</p>
+        <p class="profile-org">Dalian Maritime University<br>Dalian, China</p> -->
+        <ul class="profile-links">
+          <li>Email: <a href="mailto:King.Whao@outlook.com">King.Whao@outlook.com</a></li>
+          <li>GitHub: <a href="https://github.com/hao-wang1216?tab=repositories" target="_blank">hao-wang1216</a></li>
+        </ul>
+      </div>
+    </aside>
 
-    <td width="40"></td>
+    <main class="main-column">
+      <section class="intro" id="about-me">
+        <h2>About Me</h2>
+        <div class="section-rule"></div>
 
-    <td align="left">
-      <h2>Hao Wang</h2>
-      <p>
-        <font size="+1">
-          <b>王昊</b><br><br>
-          Researcher / undergraduate Student<br>
-          <!-- Institution -->
-          Daliann Maritime University<br>
-          Dalian, China<br>
-        </font>
-      </p>
+          I am currently an undergraduate student at Dalian Maritime University. 
+          During my undergraduate studies, I have primarily carried out research training under the guidance of <a href="https://ist.dlmu.edu.cn/info/1287/7408.htm" target="_blank">Prof. Jiqing Zhang</a>.
 
-      <p><font size="+1">
-        Email: <a href="mailto:King.Whao@outlook.com"><i>King.Whao@outlook.com</i></a><br>
-        GitHub: <a href="https://github.com/hao-wang1216?tab=repositories" target="_blank">github.com/wanghao</a><br>
-        <!-- Google Scholar: <a href="#" target="_blank">[Link]</a> -->
-      </font></p>
-    </td>
-  </tr>
-</table>
+          Beyond research, I also enjoy programming <span aria-label="programming">⌨</span>, writing <span aria-label="writing">✍</span>, 
+          and exploring delicious <span aria-label="food exploration">☕</span>.
 
-<br>
+      </section>
 
-<!-- ================== Biography ================== -->
-<h2>Biography</h2>
-<hr/>
-<p>
-  <font size="4">
-    I am currently an undergraduate student at Dalian Maritime University, majoring in Computer Science and Technology. 
-  </font>
-</p>
+      <section class="content-section" id="education">
+        <h2>Education</h2>
+        <div class="section-rule"></div>
+        <ul>
+          <li><em>2023 - Present</em>, Dalian Maritime University, Dalian, China.</li>
+        </ul>
+      </section>
 
-<br>
+      <section class="content-section" id="research-interests">
+        <h2>Research Interests</h2>
+        <div class="section-rule"></div>
+        <p>
+          My current research interests include Deep Learning, Computer Vision, and Neural Network Design.
+          In particular, I focus on:
+        </p>
+        <ul>
+          <li>Camouflaged Objects Detection and Salient Objects Detection</li>
+          <li>Visual multi-modal large model and multimodal representation learning</li>
+          <li>Weakly supervised learning for remote sense change detection</li>
+        </ul>
+      </section>
 
-<!-- ================== Research Interests ================== -->
-<h2>Research Interests</h2>
-<hr/>
-<p>
-  <font size="4">
-    <!-- <p>
-    My primary research interests lie in object detection under challenging visual scenarios. 
-    My recent work focuses on camouflaged and salient object detection, where targets are often seamlessly embedded in their surroundings or easily confused with complex backgrounds, making accurate detection particularly challenging. 
-    Detecting such objects plays a critical role in reliable scene understanding and benefits a wide range of computer vision applications, including image classification, visual tracking, content-aware image editing, medical image analysis, and robotic navigation. 
-    </p> -->
+      <section class="content-section" id="news">
+        <h2>News</h2>
+        <div class="section-rule"></div>
+        <ul>
+          <li>2024: National Scholarship for Undergraduate Students</li>
+        </ul>
+      </section>
 
-    <!-- <p>
-    In addition, I explore multimodal fusion techniques that leverage complementary information from different modalities to improve robustness and generalization in complex scenes. 
-    More recently, I have begun exploring vision language and visual multimodal large models to further enhance representation learning and cross-modal understanding.
-    </p> -->
-   
-    <p>
-      My current research interests include Deep Learning, Computer Vision, and Neural Network Design. 
-      In particular, I focus on:
-    </p>
-    <ul>
-      <li>Camouflaged Objects Detection and Salient Objects Detection</li>
-      <li>Visual multi-modal large model and Multimodal representation learning</li>
-      <li>Weakly supervised learning for remote sense change detection</li>
-      <!-- <li>Spiking neural networks and brain-inspired intelligence</li> -->
-      <!-- <li>Visual multi-modal large model for reasoning segmentation</li> -->
-    </ul>
-  </font>
-</p>
+      <section class="content-section" id="projects">
+        <h2>Projects</h2>
+        <div class="section-rule"></div>
 
+        <div class="projects-wrap">
+          <article class="project-card">
+            <div class="project-media">
+              <img src="UniCOD/Overview.png" alt="Overview of Toward Unified Cross-Modal Camouflaged Object Detection">
+            </div>
+            <div class="project-copy">
+              <div class="project-meta">
+                <span class="chip chip-year">2026</span>
+                <span class="chip chip-status">under review</span>
+              </div>
+              <h3>Toward Unified Cross-Modal Camouflaged Object Detection</h3>
+              <p class="project-authors">Jiqing Zhang,Hao Wang</p>
+              <div class="project-links">
+                <a class="project-link" href="" target="_blank">Paper</a>
+                <a class="project-link" href="" target="_blank">Code</a>
+              </div>
+            </div>
+          </article>
 
-<!-- ================== News ================== -->
-<h2>News !</h2>
-<hr/>
-<ul>
-  <li><font size="4">2024:National Scholarship for Undergraduate Students</li>
-</ul>
-<br>
+          <article class="project-card">
+            <div class="project-media">
+              <img src="UniSAM_COD/overview.png" alt="Overview of Modality-Agnostic Prompt Learning for Multi-Modal Camouflaged Object Detection">
+            </div>
+            <div class="project-copy">
+              <div class="project-meta">
+                <span class="chip chip-year">2026</span>
+                <span class="chip chip-status">under review</span>
+              </div>
+              <h3>Modality-Agnostic Prompt Learning for Multi-Modal Camouflaged Object Detection</h3>
+              <p class="project-authors">Hao Wang,Jiqing Zhang</p>
+              <div class="project-links">
+                <a class="project-link" href="https://arxiv.org/pdf/2604.12380v1" target="_blank">Paper</a>
+                <a class="project-link" href="https://github.com/hao-wang1216/MAP-SAM" target="_blank">Code</a>
+              </div>
+            </div>
+          </article>
 
-<!-- ================== Projects ================== -->
-<h2>Projects</h2>
-<hr/>
+          <!-- <article class="project-card">
+            <div class="project-media">
+              <img src="CPGNet/overview.png" alt="Overview of Conditional Polarization Guidance for Camouflaged Object Detection">
+            </div>
+            <div class="project-copy">
+              <div class="project-meta">
+                <span class="chip chip-year">2026</span>
+                <span class="chip chip-status">under review</span>
+              </div>
+              <h3>Conditional Polarization Guidance for Camouflaged Object Detection</h3>
+              <p class="project-authors">Qifan Zhang, Hao Wang</p>
+              <div class="project-links">
+                <a class="project-link" href="https://arxiv.org/pdf/2603.30008v2" target="_blank">Paper</a>
+                <a class="project-link" href="" target="_blank">Code</a>
+              </div>
+            </div>
+          </article> -->
 
-<div class="project">
-<table>
-<tbody>
-  <tr>
-    <td><font size="4"><b>2026</b></font></td>
-  </tr>
-  <tr>
-    
-    <td><font size="4">1.</font></td>
-    <td><center><img width="500" height="220" src="UniCOD/Overview.png"></center></td>
-    <td><font size="4"><b>Toward Unified Cross-Modal Camouflaged Object Detection</b>
-      <br>Hao Wang,
-      <br><font size="3">This work addresses camouflaged object detection by developing a unified multimodal
-        framework that adapts to varying auxiliary modality availability.</font>
-      <br>
-      <i>under review</i>
-      <br>
-      [<b><a href="" target="_blank">Paper</a></b>|<a href="" target="_blank"><b>Code</b></a>]
-    </font></td>
+          
+        </div>
+      </section>
+    </main>
+  </div>
 
-    <tr><td colspan="3" height="20"></td></tr>
+  <script>
+    window.addEventListener('load', function () {
+      if (!('IntersectionObserver' in window)) {
+        document.querySelectorAll('.project-card').forEach(function (card) {
+          card.classList.add('is-visible');
+        });
+        return;
+      }
 
-    <tr>
-      <td><font size="4">2.</font></td>
-      <td><center><img width="500" height="220" src="UniSAM_COD/overview.png"></center></td>
-      <td><font size="4"><b>Modality-Agnostic Prompt Learning for Multi-Modal Camouflaged Object Detection</b>
-        <br>Hao Wang,
-        <br><font size="3">
-          This work introduces a modality-agnostic multimodal framework for camouflaged object detection based on the Segment Anything Model (SAM). 
-          <!-- By generating multimodal prompts instead of modality-specific architectures, 
-          the proposed method enables parameter-efficient adaptation to diverse auxiliary modalities and 
-          achieves strong cross-modal generalization across RGB–D, RGB–T, and RGB–P settings. -->
-        </font>
-        <br>
-        <i>under review</i>
-        <br>
-        [<b><a href="https://arxiv.org/pdf/2604.12380v1" target="_blank">Paper</a></b> |
-         <a href="https://github.com/hao-wang1216/MAP-SAM" target="_blank"><b>Code</b></a>]
-      </font></td>
-    </tr>
+      var observer = new IntersectionObserver(function (entries, instance) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            instance.unobserve(entry.target);
+          }
+        });
+      }, {
+        threshold: 0.18,
+        rootMargin: '0px 0px -30px 0px'
+      });
 
-    <tr><td colspan="3" height="20"></td></tr>
-
-    <tr>
-      <td><font size="4">3.</font></td>
-      <td><center><img width="500" height="280" src="CPGNet/overview.png"></center></td>
-      <td><font size="4"><b>Conditional Polarization Guidance for Camouflaged Object Detection</b>
-        <br>Qifan Zhang,Hao Wang,
-        <br><font size="3">
-          This work  introduces an asymmetric conditional polarization guidance paradigm for camouflaged object detection.
-          <!-- By generating multimodal prompts instead of modality-specific architectures, 
-          the proposed method enables parameter-efficient adaptation to diverse auxiliary modalities and 
-          achieves strong cross-modal generalization across RGB–D, RGB–T, and RGB–P settings. -->
-        </font>
-        <br>
-        <i>under review</i>
-        <br>
-        [<b><a href="https://arxiv.org/pdf/2603.30008v2" target="_blank">Paper</a></b> |
-         <a href="" target="_blank"><b>Code</b></a>]
-      </font></td>
-    </tr>
-
-  </tr>
-  <tr></tr>
-  <tr></tr>
-
-
-
-
-
-</div>
-
-</tbody>
-</table>
+      document.querySelectorAll('.project-card').forEach(function (card, index) {
+        card.style.transitionDelay = (index * 0.08) + 's';
+        observer.observe(card);
+      });
+    });
+  </script>
 </body>
 </html>
