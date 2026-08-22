@@ -98,11 +98,13 @@ export const experience = [];
 
 export const projects = [
   {
-    org: "Research Training",
+    org: "BIXOCEAN · 边际领域",
+    logo: "/images/bixocean-logo.png",
+    link: "https://bixocean.com/",
     desc:
-      "Carried out undergraduate research training on deep learning, computer vision, camouflaged object detection, multimodal perception, and remote sensing change detection.",
-    role: "Advised by Prof. Jiqing Zhang, Dalian Maritime University",
-    date: "2023 - Present",
+      "Working on algorithm research and development for underwater embodied robotics, with a focus on computer vision, multimodal perception, 3D perception, and Vision-Language-Action (VLA) models. Exploring how multimodal foundation models can enable underwater robots to better perceive, understand, and interact with complex real-world environments.",
+    role: "Algorithm Intern · Marine Embodied Intelligence",
+    date: "2026 - Present",
   },
 ];
 
