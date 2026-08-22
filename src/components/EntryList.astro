@@ -26,14 +26,23 @@ const withLogo = items.some((e) => e.logo);
       <div class="entry">
         {withLogo && (
           <span class="entry-logo">
-            {e.logo && (
+            {e.logo && typeof e.logo === "string" ? (
+              <img
+                src={e.logo}
+                alt=""
+                width="48"
+                height="48"
+                loading="lazy"
+                decoding="async"
+              />
+            ) : e.logo ? (
               <Image
                 src={e.logo}
                 alt=""
                 width={48}
                 loading="lazy"
               />
-            )}
+            ) : null}
           </span>
         )}
         <div>
