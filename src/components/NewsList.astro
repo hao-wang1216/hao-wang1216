@@ -1,0 +1,16 @@
+---
+// Dated one-line updates. `text` is an HTML snippet so an item can carry a
+// link or a bit of emphasis.
+const { items } = Astro.props;
+---
+
+<ul class="news">
+  {
+    items.map((n) => (
+      <li>
+        <span class="news-date muted-2">{n.date}</span>
+        <span set:html={n.text} />
+      </li>
+    ))
+  }
+</ul>

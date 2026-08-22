@@ -1,0 +1,87 @@
+---
+import { Image } from "astro:assets";
+
+// Shared by Education, Research Experience, Projects, Awards and Teaching:
+// optional logo on the left, name and role in the middle, dates aligned in a
+// column on the right. One component for all of them keeps the rhythm of the
+// page identical from section to section.
+//
+// Every field except `org` is optional:
+//   org    institution, project or course name (bold)
+//   desc   one or two sentences on what it is
+//   role   your role, advisor, or anything secondary
+//   date   right-hand column; keep the format consistent across sections
+//   logo   imported image, shown at 48px
+//   image  imported project/research image, shown above the description
+//   url    makes `org` a link
+//   links  a row of outlined buttons — Code, Website, Docs, Slides, whatever
+//          the entry has — in the same style the publication list uses
+const { items } = Astro.props;
+const withLogo = items.some((e) => e.logo);
+---
+
+<div class:list={["entries", withLogo && "has-logo"]}>
+  {
+    items.map((e) => (
+      <div class="entry">
+        {withLogo && (
+          <span class="entry-logo">
+            {e.logo && (
+              <Image
+                src={e.logo}
+                alt=""
+                widths={[48, 96, 144]}
+                sizes="48px"
+                loading="lazy"
+              />
+            )}
+          </span>
+        )}
+        <div>
+          <p class="entry-org">
+            <strong>
+              {e.url ? (
+                <a href={e.url} target="_blank" rel="noopener noreferrer">
+                  {e.org}
+                </a>
+              ) : (
+                e.org
+              )}
+            </strong>
+          </p>
+          {e.image && (
+            <Image
+              class="entry-image"
+              src={e.image}
+              alt={e.imageAlt ?? ""}
+              widths={[420, 720, 960]}
+              sizes="(max-width: 760px) calc(100vw - 48px), 620px"
+              loading="lazy"
+            />
+          )}
+          {/* Description first, advisor second: say what the thing is before
+              saying who supervised it. */}
+          {e.desc && <p class="entry-desc">{e.desc}</p>}
+          {e.role && <p class="entry-role muted">{e.role}</p>}
+          {/* The same outlined buttons the publication list uses, so a project
+              with code and docs reads like a paper with a PDF and a repo. */}
+          {e.links?.length > 0 && (
+            <div class="entry-actions">
+              {e.links.map((l) => (
+                <a
+                  class="pill"
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          )}
+        </div>
+        <span class="entry-date muted-2">{e.date}</span>
+      </div>
+    ))
+  }
+</div>

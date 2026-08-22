@@ -1,0 +1,21 @@
+{
+  "name": "hao-wang1216.github.io",
+  "version": "1.0.0",
+  "description": "Hao Wang's academic homepage built with Astro.",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "lint": "oxlint",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^7.2.2"
+  },
+  "devDependencies": {
+    "oxlint": "^1.75.0"
+  }
+}

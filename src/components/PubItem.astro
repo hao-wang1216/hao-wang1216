@@ -1,0 +1,131 @@
+---
+// One paper: title, authors, venue, then a row of buttons. Abstract and
+// BibTeX expand in place; Paper, Code and anything else in `links` open
+// externally.
+//
+// Both panels are in the HTML from the start (with `hidden`) and the script
+// only toggles them, so crawlers that do not run JavaScript still read the
+// abstract — which is most of what makes a paper findable.
+import { Image } from "astro:assets";
+
+const {
+  title,
+  authors,
+  venue,
+  meta,
+  image,
+  imageAlt = "",
+  abstract,
+  bibtex,
+  links = [],
+} = Astro.props;
+---
+
+<div class="pub">
+  <p class="pub-title">
+    <strong>{title}</strong>
+  </p>
+  {
+    image && (
+      <Image
+        class="pub-image"
+        src={image}
+        alt={imageAlt}
+        widths={[420, 720, 960]}
+        sizes="(max-width: 760px) calc(100vw - 48px), 620px"
+        loading="lazy"
+      />
+    )
+  }
+  {authors && <p class="pub-meta muted" set:html={authors} />}
+  {venue && <p class="pub-venue" set:html={venue} />}
+  {meta && <p class="pub-meta muted">{meta}</p>}
+
+  {
+    (abstract || bibtex || links.length > 0) && (
+      <div class="pub-actions">
+        {abstract && (
+          <button
+            type="button"
+            class="pill"
+            aria-expanded="false"
+            data-toggle="abstract"
+          >
+            Abstract
+          </button>
+        )}
+        {links.map((l) => (
+          <a class="pill" href={l.href} target="_blank" rel="noopener noreferrer">
+            {l.label}
+          </a>
+        ))}
+        {bibtex && (
+          <button
+            type="button"
+            class="pill"
+            aria-expanded="false"
+            data-toggle="bibtex"
+          >
+            BibTeX
+          </button>
+        )}
+      </div>
+    )
+  }
+
+  {abstract && <div class="pub-panel" data-panel="abstract" hidden>{abstract}</div>}
+  {
+    bibtex && (
+      <div class="pub-panel" data-panel="bibtex" hidden>
+        <button type="button" class="pill pill-copy">
+          Copy
+        </button>
+        <pre>{bibtex}</pre>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  // Astro bundles a component's script once and runs it globally, so this
+  // takes over every .pub on the page in one pass.
+  document.querySelectorAll(".pub").forEach((pub) => {
+    const buttons = pub.querySelectorAll("[data-toggle]");
+    const panels = pub.querySelectorAll("[data-panel]");
+    let open = null; // 'abstract' | 'bibtex' | null
+
+    const render = () => {
+      buttons.forEach((b) => {
+        const on = b.dataset.toggle === open;
+        b.classList.toggle("is-open", on);
+        b.setAttribute("aria-expanded", String(on));
+      });
+      panels.forEach((p) => {
+        p.hidden = p.dataset.panel !== open;
+      });
+    };
+
+    buttons.forEach((b) => {
+      b.addEventListener("click", () => {
+        open = open === b.dataset.toggle ? null : b.dataset.toggle;
+        render();
+      });
+    });
+
+    const copy = pub.querySelector(".pill-copy");
+    const pre = pub.querySelector("[data-panel='bibtex'] pre");
+    let timer;
+    copy?.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(pre.textContent);
+        copy.textContent = "Copied";
+        clearTimeout(timer);
+        timer = setTimeout(() => (copy.textContent = "Copy"), 1600);
+      } catch {
+        // Clipboard unavailable (insecure origin, or permission denied):
+        // fail quietly, the text is still there to select by hand.
+        copy.textContent = "Copy";
+      }
+    });
+  });
+</script>

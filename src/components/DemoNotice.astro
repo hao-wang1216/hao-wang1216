@@ -1,0 +1,72 @@
+---
+// The bar that marks this page as a demo. Everything on it is placeholder
+// content, and a visitor deserves to be told that before they read a line of
+// it. It is also the first of the two places the demo asks for a star — this
+// one catches a visitor on arrival, TemplateCta catches them at the bottom,
+// once they have seen what the page actually does.
+//
+// Switch it off with `demoNotice: false` in src/site.config.js once the
+// content is yours — or delete this component and its two references.
+const { repo } = Astro.props;
+---
+
+<div class="demo-notice">
+  <div class="bar">
+    <p>
+      <strong>Demo — placeholder content.</strong> Every name, paper, link and
+      date below is invented. This page is the live preview of <a href={repo}
+        >academic-homepage</a
+      >, an open-source template for academic homepages.
+    </p>
+    <a class="pill star" href={repo}>
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45l-5.8 3.05 1.1-6.45-4.7-4.6 6.5-.95z"
+        ></path>
+      </svg>
+      Star on GitHub
+    </a>
+  </div>
+</div>
+
+<style>
+  .demo-notice {
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-divider);
+  }
+  /* The notice and the button share one row so the button sits at the far
+     right of the content column rather than floating over the page. */
+  .bar {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: 10px var(--gutter);
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+  .demo-notice p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--color-text) 75%, transparent);
+  }
+  /* .pill is the outlined button used under papers and entries; the star only
+     adds the icon gap and stops the row from squeezing it. */
+  .star {
+    flex-shrink: 0;
+    gap: 6px;
+  }
+
+  /* Narrow: the button drops under the text rather than crushing it to two
+     words per line. */
+  @media (max-width: 760px) {
+    .bar {
+      display: block;
+      padding-bottom: 12px;
+    }
+    .star {
+      margin-top: 10px;
+    }
+  }
+</style>

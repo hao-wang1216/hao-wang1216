@@ -1,0 +1,58 @@
+---
+// Light/dark switch. The theme itself is applied before first paint by the
+// inline script in Base.astro; this only records a choice and flips the
+// attribute. Both labels are in the HTML and CSS shows the relevant one, so
+// the button reads correctly even before this script runs.
+---
+
+{/* No aria-label: the visible text is the accessible name. An aria-label of
+    "Switch to dark theme" over a button reading "Dark mode" fails WCAG 2.5.3
+    (Label in Name) — someone using voice control says what they can see, and
+    "click Dark mode" would not match. */}
+<button type="button" class="theme-toggle" data-theme-toggle>
+  <span class="when-light">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"></path>
+    </svg>
+    Dark mode
+  </span>
+  <span class="when-dark">
+    <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="4.2" fill="currentColor"></circle>
+      <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+        <path d="M12 2.6v2.2M12 19.2v2.2M2.6 12h2.2M19.2 12h2.2"></path>
+        <path d="M5.4 5.4 7 7M17 17l1.6 1.6M18.6 5.4 17 7M7 17l-1.6 1.6"></path>
+      </g>
+    </svg>
+    Light mode
+  </span>
+</button>
+
+<script>
+  const root = document.documentElement;
+  const button = document.querySelector("[data-theme-toggle]");
+  const media = matchMedia("(prefers-color-scheme: dark)");
+
+  button?.addEventListener("click", () => {
+    const next = root.dataset.theme === "dark" ? "light" : "dark";
+    root.dataset.theme = next;
+    try {
+      localStorage.setItem("theme", next);
+    } catch {
+      /* private mode: the choice just does not persist */
+    }
+  });
+
+  // Until a choice is made, keep following the operating system live.
+  media.addEventListener("change", (e) => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem("theme");
+    } catch {
+      /* ignore */
+    }
+    if (!saved) root.dataset.theme = e.matches ? "dark" : "light";
+  });
+</script>

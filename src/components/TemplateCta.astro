@@ -1,0 +1,56 @@
+---
+// The second half of the demo's ask, at the end of the page. The bar at the
+// top catches a visitor before they know what this is; by the time they reach
+// the bottom of a one-page site they have seen the whole thing, which is the
+// point at which "take a copy" means something.
+//
+// Like DemoNotice, this renders only while `demoNotice` is on in
+// src/site.config.js, so it disappears the moment the page is about you.
+const { repo } = Astro.props;
+---
+
+<aside class="template-cta">
+  <p>
+    Every name and paper above is invented. The layout, the code and the CV
+    underneath them are not — take a copy and put your own record in.
+  </p>
+  <div class="actions">
+    <a class="pill" href={`${repo}/generate`}>Use this template</a>
+    <a class="pill" href={repo}>
+      <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
+        <path
+          fill="currentColor"
+          d="M12 2.6l2.9 5.9 6.5.95-4.7 4.6 1.1 6.45L12 17.45l-5.8 3.05 1.1-6.45-4.7-4.6 6.5-.95z"
+        ></path>
+      </svg>
+      Star on GitHub
+    </a>
+  </div>
+</aside>
+
+<style>
+  /* Sits above the "Last updated" footer, separated by the same rule weight
+     the sections use, so it reads as the end of the page rather than another
+     section of the fictional CV. */
+  .template-cta {
+    margin-top: 44px;
+    padding-top: 24px;
+    border-top: 1px solid var(--color-rule);
+  }
+  .template-cta p {
+    margin: 0;
+    max-width: 78ch;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: color-mix(in srgb, var(--color-text) 75%, transparent);
+  }
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .actions .pill {
+    gap: 6px;
+  }
+</style>

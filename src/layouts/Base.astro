@@ -1,0 +1,115 @@
+---
+// The <head> for every page: SEO tags, social cards, structured data and the
+// theme bootstrap. Pages pass in a title and their own content.
+import { getImage } from "astro:assets";
+import { site, absoluteUrl } from "../site.config.js";
+import { profile } from "../data.js";
+import "../styles/index.css";
+
+const {
+  title,
+  description = site.description,
+  socialDescription = site.socialDescription,
+  path = "/",
+  noindex = false,
+  jsonLd = null,
+} = Astro.props;
+
+const canonical = absoluteUrl(path);
+const assetUrl = (file) =>
+  `${import.meta.env.BASE_URL}/${file}`.replace(/\/{2,}/g, "/");
+
+// Social-card scrapers need an absolute URL to an image. The avatar on the
+// page ships as WebP, but WeChat and LinkedIn do not render WebP reliably, so
+// a JPEG copy is emitted just for them. The filename carries a content hash:
+// keep the photo and the URL stays stable, so their caches keep working.
+const ogImage = await getImage({
+  src: profile.photo,
+  format: "jpeg",
+  width: 900,
+  height: 1080,
+});
+// Astro already puts `base` in front of the path it hands back, so this joins
+// against the origin only — absoluteUrl() would prepend `base` a second time.
+const ogImageUrl = new URL(ogImage.src, site.url).href;
+
+// With `theme.default: "system"` the attribute is left off and the inline
+// script below fills it in from the visitor's OS setting or their saved
+// choice. Pinning light or dark renders the attribute here, so a pinned site
+// with the toggle disabled ships no theme JavaScript at all.
+const pinnedTheme = site.theme.default === "system" ? undefined : site.theme.default;
+const needsThemeScript = site.theme.default === "system" || site.theme.toggle;
+---
+
+<!doctype html>
+<html lang={site.lang} data-theme={pinnedTheme}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="author" content={profile.nameEn} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <link rel="icon" type="image/svg+xml" href={assetUrl("favicon.svg")} />
+
+    {/* Link previews. WeChat, X, LinkedIn and Slack read these; none of them
+        run JavaScript, which is why the page is server-rendered to HTML. */}
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={profile.nameEn} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={socialDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImageUrl} />
+    <meta property="og:locale" content={site.locale} />
+    {
+      site.localeAlternate && (
+        <meta property="og:locale:alternate" content={site.localeAlternate} />
+      )
+    }
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={socialDescription} />
+    <meta name="twitter:image" content={ogImageUrl} />
+
+    {/* Structured data: states plainly to search engines and AI assistants
+        who this is, where they are, and what they work on. */}
+    {
+      jsonLd && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(jsonLd)}
+        />
+      )
+    }
+
+    {/* Runs before first paint so the page never flashes the wrong theme.
+        Inline and tiny on purpose — an external file would be a render-
+        blocking round trip. */}
+    {
+      needsThemeScript && (
+        <script is:inline define:vars={{ defaultTheme: site.theme.default }}>
+          let saved = null;
+          try {
+            saved = localStorage.getItem("theme");
+          } catch {
+            /* private mode: fall back to the default */
+          }
+          const wanted = saved || defaultTheme;
+          document.documentElement.dataset.theme =
+            wanted === "dark" ||
+            (wanted !== "light" &&
+              matchMedia("(prefers-color-scheme: dark)").matches)
+              ? "dark"
+              : "light";
+        </script>
+      )
+    }
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,24 @@
+# Everything is open to crawlers — an academic page exists to be found and cited.
+User-agent: *
+Allow: /
+
+# AI crawlers, listed by name so none of them has to guess.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://hao-wang1216.github.io/sitemap.xml

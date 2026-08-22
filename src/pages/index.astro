@@ -1,0 +1,174 @@
+---
+import Base from "../layouts/Base.astro";
+import Sidebar from "../components/Sidebar.astro";
+import Section from "../components/Section.astro";
+import EntryList from "../components/EntryList.astro";
+import NewsList from "../components/NewsList.astro";
+import PubItem from "../components/PubItem.astro";
+import DemoNotice from "../components/DemoNotice.astro";
+import TemplateCta from "../components/TemplateCta.astro";
+import { site, absoluteUrl } from "../site.config.js";
+import {
+  profile,
+  about,
+  news,
+  education,
+  publications,
+  workingPapers,
+  experience,
+  projects,
+  awards,
+  teaching,
+  lastUpdated,
+} from "../data.js";
+
+const title = [profile.nameEn, profile.nameCn].filter(Boolean).join(" ");
+
+// Structured data, assembled from the same content the page renders — nothing
+// to keep in sync by hand. Institutions you list an `url` for in `education`
+// become `alumniOf`; external profile links become `sameAs`.
+const email = profile.links.find((l) => l.href.startsWith("mailto:"))?.href;
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: profile.nameEn,
+  ...(profile.nameCn && { alternateName: profile.nameCn }),
+  url: absoluteUrl("/"),
+  jobTitle: site.seo.jobTitle,
+  description: site.description,
+  ...(email && { email }),
+  ...(site.seo.affiliation && {
+    affiliation: { "@type": "CollegeOrUniversity", ...site.seo.affiliation },
+  }),
+  alumniOf: education
+    .filter((e) => e.url && e.org !== site.seo.affiliation?.name)
+    .map((e) => ({
+      "@type": "CollegeOrUniversity",
+      name: e.org,
+      sameAs: e.url,
+    })),
+  ...(site.seo.location && {
+    homeLocation: {
+      "@type": "Place",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: site.seo.location.locality,
+        addressCountry: site.seo.location.country,
+      },
+    },
+  }),
+  knowsAbout: site.seo.knowsAbout,
+  sameAs: profile.links
+    .filter((l) => /^https?:/.test(l.href))
+    .map((l) => l.href),
+};
+---
+
+<Base title={title} path="/" jsonLd={jsonLd}>
+  {site.demoNotice && <DemoNotice repo={site.repo} />}
+
+  {/* Full-bleed masthead: the rule spans the viewport while the name inside
+      lines up with the content below. */}
+  <header class="site-header">
+    <h1>
+      {profile.nameEn}
+      {profile.nameCn && <span class="cn">{profile.nameCn}</span>}
+    </h1>
+  </header>
+
+  <div class="page">
+    <Sidebar />
+
+    {/* Every section below disappears on its own when its array in
+        src/data.js is empty. To reorder the page, move these blocks. */}
+    <main>
+      {
+        about.length > 0 && (
+          <Section id="about" title="About Me">
+            <div class="prose">
+              {about.map((para) => (
+                <p set:html={para} />
+              ))}
+            </div>
+          </Section>
+        )
+      }
+
+      {
+        news.length > 0 && (
+          <Section id="news" title="News">
+            <NewsList items={news} />
+          </Section>
+        )
+      }
+
+      {
+        education.length > 0 && (
+          <Section id="education" title="Education">
+            <EntryList items={education} />
+          </Section>
+        )
+      }
+
+      {
+        projects.length > 0 && (
+          <Section id="internship" title="Internship">
+            <EntryList items={projects} />
+          </Section>
+        )
+      }
+
+      {
+        publications.length > 0 && (
+          <Section id="publications" title="Publications">
+            <div class="pubs">
+              {publications.map((p) => (
+                <PubItem {...p} />
+              ))}
+            </div>
+          </Section>
+        )
+      }
+
+      {
+        experience.length > 0 && (
+          <Section id="experience" title="Research Experience">
+            <EntryList items={experience} />
+          </Section>
+        )
+      }
+
+      {
+        workingPapers.length > 0 && (
+          <Section id="papers" title="Papers">
+            <div class="pubs">
+              {workingPapers.map((p) => (
+                <PubItem {...p} />
+              ))}
+            </div>
+          </Section>
+        )
+      }
+
+      {
+        awards.length > 0 && (
+          <Section id="awards" title="Awards & Grants">
+            <EntryList items={awards} />
+          </Section>
+        )
+      }
+
+      {
+        teaching.length > 0 && (
+          <Section id="teaching" title="Teaching">
+            <EntryList items={teaching} />
+          </Section>
+        )
+      }
+
+      {site.demoNotice && <TemplateCta repo={site.repo} />}
+
+      <footer>Last updated {lastUpdated}</footer>
+    </main>
+  </div>
+</Base>

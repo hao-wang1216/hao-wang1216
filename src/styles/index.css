@@ -1,0 +1,538 @@
+/* ── Design tokens ──────────────────────────────────────────────────────────
+   Every colour on the page comes from this block. Each one is declared twice:
+   a plain light value first, then the same token as light-dark(light, dark).
+   Browsers that understand light-dark() take the second declaration and follow
+   `color-scheme`; older ones ignore it and keep the light value. Changing a
+   colour therefore means editing one pair of lines, not hunting through the
+   file.
+
+   `color-scheme: light dark` makes the page follow the operating system.
+   Base.astro writes data-theme="light" | "dark" on <html> to pin it — from a
+   saved choice, or from site.config.js when the theme is not "system". */
+:root {
+  color-scheme: light dark;
+
+  --color-bg: #f3f2f2;
+  --color-bg: light-dark(#f3f2f2, #1a1817);
+  --color-surface: #eae9e9;
+  --color-surface: light-dark(#eae9e9, #252221);
+  --color-text: #201e1d;
+  --color-text: light-dark(#201e1d, #e8e6e3);
+  /* Link colour, and the brighter tone links move to on hover. In dark mode
+     the pair is inverted: the resting colour is the calmer of the two. */
+  --color-link: #006786;
+  --color-link: light-dark(#006786, #58c8ea);
+  --color-accent: #0088b0;
+  --color-accent: light-dark(#0088b0, #8fdcf5);
+  /* Hairlines and rules, derived from the text colour so they track the theme */
+  --color-divider: color-mix(in srgb, var(--color-text) 16%, transparent);
+  --color-rule: color-mix(in srgb, var(--color-text) 25%, transparent);
+
+  /* System serif stack: academic, readable, and build-safe without fetching
+     Google Fonts. Songti/SimSun keep the Chinese name visually compatible. */
+  --font-heading: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+  --font-body: Georgia, "Times New Roman", "Songti SC", "SimSun", serif;
+  --font-cjk: "Songti SC", "SimSun", "Microsoft YaHei", serif;
+
+  /* The three measurements the whole layout is built from: content width,
+     outer margin, sidebar width. The masthead and the body share the first
+     two, which is what keeps the name aligned with the text below it. */
+  --content-max: 1320px;
+  --gutter: 76px;
+  --sidebar-w: 268px;
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.8;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+a {
+  color: var(--color-link);
+  text-underline-offset: 3px;
+}
+a:hover {
+  color: var(--color-accent);
+}
+
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+::selection {
+  background: color-mix(in srgb, var(--color-accent) 30%, transparent);
+}
+
+.muted {
+  color: color-mix(in srgb, var(--color-text) 70%, transparent);
+}
+/* 65% is the lowest step that still clears WCAG AA (4.5:1): 60% gives 4.24:1,
+   65% gives 4.95:1. */
+.muted-2 {
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+}
+
+/* ── Masthead ───────────────────────────────────────────────────────────────
+   The rule sits on the full-width header, so it spans the viewport; the h1
+   inside uses the same max-width and padding as .page, so the name lines up
+   with the text below. */
+.site-header {
+  border-bottom: 1px solid var(--color-divider);
+}
+.site-header h1 {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 30px var(--gutter);
+  font-size: 41px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+}
+.site-header .cn {
+  font-family: var(--font-cjk);
+  /* Not 1em: a Han character fills its em box, while Latin capitals occupy
+     about 70% of theirs, so at equal font-size the CJK name looks 22% larger.
+     0.82em is where the two are optically the same height; 0.86em gives the
+     name a little more weight while staying inside the Latin line box. */
+  font-size: 0.86em;
+  letter-spacing: 0; /* CJK glyphs do not want the Latin negative tracking */
+  font-weight: 400;
+  color: color-mix(in srgb, var(--color-text) 55%, transparent);
+}
+
+/* ── Body: sidebar plus a main column that fills the rest ──────────────── */
+.page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  gap: 64px;
+  padding: 52px var(--gutter) 96px;
+}
+
+/* — Sidebar — */
+aside {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 6px;
+}
+.avatar-wrap {
+  width: 200px;
+  max-width: 100%;
+  /* A non-square box with border-radius:50% is an ellipse, not a circle */
+  aspect-ratio: 5 / 6;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--color-surface);
+  border: 1px solid var(--color-divider);
+  display: grid;
+  place-items: center;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--color-text) 45%, transparent);
+}
+.avatar-wrap::before {
+  content: "Photo";
+  grid-area: 1 / 1;
+}
+.avatar {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.avatar:not([src]) {
+  visibility: hidden;
+}
+.side-name {
+  font-size: 27px;
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.015em;
+}
+.side-role {
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 8px 0 0;
+}
+.side-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 16.5px;
+  line-height: 1.4;
+}
+.side-links a {
+  text-decoration: none;
+}
+.side-links a:hover {
+  text-decoration: underline;
+}
+
+/* Light/dark switch: styled as one more item in the link list rather than as
+   a button, so it does not compete with the content. */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 16.5px;
+  line-height: 1.4;
+  color: var(--color-link);
+  cursor: pointer;
+}
+.theme-toggle:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+.theme-toggle svg {
+  flex: none;
+}
+.theme-toggle > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+/* Show the label for the theme you would switch *to*. Both are in the HTML so
+   the button is correct even if the script has not run yet. */
+.theme-toggle .when-dark,
+:root[data-theme="dark"] .theme-toggle .when-light {
+  display: none;
+}
+:root[data-theme="dark"] .theme-toggle .when-dark {
+  display: inline-flex;
+}
+
+/* — Main column —
+   Nothing here sets its own max-width: every block fills the column, so the
+   right edge lines up all the way down the page. */
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  min-width: 0;
+}
+
+section h2 {
+  font-size: 33px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  margin: 0 0 10px;
+}
+section hr {
+  border: 0;
+  border-top: 1px solid var(--color-rule);
+  margin: 0 0 24px;
+}
+.prose {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.prose p {
+  margin: 0;
+}
+
+/* — News — */
+.news {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.news li {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 16px;
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+.news-date {
+  white-space: nowrap;
+}
+
+/* — Publications — */
+/* Papers need real air between them: the gap has to read as clearly larger
+   than the gaps inside one entry (title → authors → venue → buttons), or two
+   papers run together.
+   The spacing lives on a flex container rather than on `.pub + .pub` because
+   Astro emits each component's <script> between the items, which breaks the
+   adjacent-sibling selector. Those script tags are display:none, so they are
+   not flex items and do not add gaps of their own. */
+.pubs {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.pub-title {
+  font-size: 18.5px;
+  line-height: 1.5;
+  margin: 0;
+}
+.pub-image {
+  width: min(100%, 620px);
+  height: auto;
+  display: block;
+  margin: 12px 0 12px;
+  border: 1px solid var(--color-divider);
+  border-radius: 5px;
+  background: var(--color-surface);
+}
+.pub-meta {
+  font-size: 16.5px;
+  line-height: 1.5;
+  margin: 6px 0 0;
+}
+.pub-venue {
+  font-size: 16.5px;
+  line-height: 1.5;
+  margin: 2px 0 0;
+}
+
+/* The row of outlined buttons under a paper (Abstract / Paper / BibTeX) or
+   under an entry (Code / Website / Docs). One style for both, so a project
+   with a repo reads like a paper with a PDF. */
+.pub-actions,
+.entry-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.entry-actions {
+  margin-top: 10px;
+}
+.pill {
+  display: inline-flex;
+  align-items: center;
+  font: inherit;
+  font-size: 14.5px;
+  line-height: 1;
+  padding: 6px 11px;
+  color: var(--color-link);
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-link) 45%, transparent);
+  border-radius: 3px;
+  text-decoration: none;
+  cursor: pointer;
+}
+.pill:hover {
+  background: color-mix(in srgb, var(--color-accent) 10%, transparent);
+  border-color: var(--color-link);
+}
+.pill.is-open {
+  background: var(--color-link);
+  border-color: var(--color-link);
+  color: var(--color-bg);
+}
+
+/* Expanded Abstract / BibTeX panel */
+.pub-panel {
+  position: relative;
+  margin-top: 12px;
+  padding: 14px 16px;
+  background: var(--color-surface);
+  border-left: 2px solid var(--color-rule);
+  font-size: 16px;
+  line-height: 1.65;
+}
+.pub-panel pre {
+  margin: 0;
+  padding-right: 72px; /* room for the Copy button in the corner */
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 13px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.pill-copy {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 13px;
+  padding: 4px 9px;
+  background: var(--color-bg);
+}
+
+/* — Entry lists (Education, Experience, Projects, Awards, Teaching) —
+   Two columns: name and role take the space, dates line up on the right.
+   A third column appears in front when any entry has a logo. */
+.entries {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+/* A list whose entries carry buttons needs more room between them: 20px reads
+   as "same entry" once there is a button row above it. */
+.entries:has(.entry-actions) {
+  gap: 30px;
+}
+.entry {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: baseline;
+}
+.entries.has-logo .entry {
+  grid-template-columns: 48px 1fr auto;
+  gap: 20px;
+  align-items: center; /* steadier than baseline once a logo is in the row */
+}
+.entry-logo {
+  width: 48px;
+  height: 48px;
+  display: block;
+}
+.entry-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* Most institution logos are dark ink on a transparent background and vanish
+   in dark mode. A light backing chip keeps every logo readable, whatever it
+   is. Delete this rule if your logos already work on a dark background. */
+:root[data-theme="dark"] .entry-logo img {
+  background: #f3f2f2;
+  border-radius: 5px;
+  padding: 3px;
+}
+.entry-org {
+  font-size: 18px;
+  margin: 0;
+}
+/* A linked institution name stays in text colour: three blue headings in a
+   row would read as navigation, which is not what they are. */
+.entry-org a {
+  color: inherit;
+  text-decoration: none;
+}
+.entry-org a:hover {
+  color: var(--color-link);
+  text-decoration: underline;
+}
+.entry-image {
+  width: min(100%, 620px);
+  height: auto;
+  display: block;
+  margin: 12px 0 10px;
+  border: 1px solid var(--color-divider);
+  border-radius: 5px;
+  background: var(--color-surface);
+}
+/* Description sits at full text colour, heavier than the advisor line below
+   it: bold title > description > attribution. */
+.entry-desc {
+  font-size: 16.5px;
+  line-height: 1.6;
+  margin: 5px 0 0;
+  max-width: 78ch;
+}
+.entry-role {
+  font-size: 16.5px;
+  margin: 4px 0 0;
+}
+.entry-date {
+  font-size: 16px;
+  white-space: nowrap; /* dates must not wrap, or the right column breaks up */
+}
+
+footer {
+  margin-top: 8px;
+  font-size: 15px;
+  color: color-mix(in srgb, var(--color-text) 65%, transparent);
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  :root {
+    --gutter: 48px;
+    --sidebar-w: 220px;
+  }
+  .page {
+    gap: 48px;
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --gutter: 24px;
+  }
+  body {
+    font-size: 17px;
+    line-height: 1.75;
+  }
+  .site-header h1 {
+    padding: 22px var(--gutter);
+    font-size: 33px;
+  }
+  .page {
+    grid-template-columns: 1fr;
+    gap: 40px;
+    padding: 36px var(--gutter) 64px;
+  }
+  .avatar-wrap {
+    width: 150px;
+  }
+  section h2 {
+    font-size: 28px;
+  }
+  .news li {
+    grid-template-columns: 1fr;
+    gap: 2px;
+  }
+  /* Narrow screens: dates drop to their own line instead of fighting a long
+     institution name for width. */
+  .entry,
+  .entries.has-logo .entry {
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+  }
+  .entry > div {
+    grid-column: 2;
+  }
+  .entry-date {
+    grid-column: 2;
+    white-space: normal;
+  }
+  .entries:not(.has-logo) .entry {
+    grid-template-columns: 1fr;
+  }
+  .entries:not(.has-logo) .entry > div,
+  .entries:not(.has-logo) .entry-date {
+    grid-column: 1;
+  }
+}

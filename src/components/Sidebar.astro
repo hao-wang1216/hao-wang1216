@@ -1,0 +1,61 @@
+---
+import { Image } from "astro:assets";
+import { profile } from "../data.js";
+import { site } from "../site.config.js";
+import ThemeToggle from "./ThemeToggle.astro";
+---
+
+<aside>
+  <div class="avatar-wrap">
+    <Image
+      class="avatar"
+      src={profile.photo}
+      alt={`Portrait of ${profile.nameEn}`}
+      widths={[200, 400, 600]}
+      sizes="(max-width: 760px) 150px, 200px"
+      loading="eager"
+      fetchpriority="high"
+    />
+  </div>
+  <div>
+    <h2 class="side-name">{profile.nameEn}</h2>
+    <p class="side-role muted">
+      {
+        profile.role.map((line, i) => (
+          <span>
+            {line}
+            {i < profile.role.length - 1 && <br />}
+          </span>
+        ))
+      }
+    </p>
+  </div>
+  <div class="side-links">
+    {profile.location && <span class="muted">{profile.location}</span>}
+    {
+      profile.links.map((l) => (
+        <a
+          href={l.href}
+          target={l.newTab ? "_blank" : undefined}
+          rel={l.newTab ? "noopener noreferrer" : undefined}
+        >
+          {l.label}
+        </a>
+      ))
+    }
+    {site.theme.toggle && <ThemeToggle />}
+  </div>
+</aside>
+
+<script>
+  // If the photo fails to load, drop its src so the "Photo" placeholder
+  // underneath shows through instead of a broken-image icon.
+  document.querySelectorAll("img.avatar").forEach((img) => {
+    const drop = () => img.removeAttribute("src");
+    img.addEventListener("error", drop);
+    // This script is deferred, so the image may already have failed before it
+    // runs and the error event is long gone. Check for that case directly:
+    // finished loading but zero pixels wide means it failed.
+    if (img.complete && img.naturalWidth === 0) drop();
+  });
+</script>
