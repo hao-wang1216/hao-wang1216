@@ -31,7 +31,10 @@ export const about = [
   `I am currently an undergraduate student at Dalian Maritime University.
    During my undergraduate studies, I have primarily carried out research
    training under the guidance of
-   <a href="https://ist.dlmu.edu.cn/info/1287/7408.htm" target="_blank" rel="noopener noreferrer">Prof. Jiqing Zhang</a>.`,
+   <a href="https://ist.dlmu.edu.cn/info/1287/7408.htm" target="_blank" rel="noopener noreferrer">Prof. Jiqing Zhang</a>.
+   My current research interest lies in enabling robots to perceive, understand, and interact with the real world, and ultimately make intelligent decisions. 
+   Toward this goal, I am particularly interested in image processing, multimodal learning, 3D perception and depth estimation, and Vision-Language-Action (VLA) models.
+   `,
   `Beyond research, I also enjoy programming, writing, and exploring delicious
    food.`,
 ];
@@ -85,7 +88,9 @@ export const workingPapers = [
     meta: "Under review",
     image: unicodImage,
     imageAlt: "Overview of Toward Unified Cross-Modal Camouflaged Object Detection.",
-    links: [],
+    links: [
+      { label: "Code", href: "https://github.com/hao-wang1216/UniNet" }
+    ],
   },
 ];
 
