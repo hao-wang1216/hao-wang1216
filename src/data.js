@@ -102,7 +102,7 @@ export const projects = [
     logo: "/images/bixocean-logo.png",
     url: "https://bixocean.com/",
     desc:
-      "Working on algorithm research and development for underwater embodied robotics, with a focus on computer vision, multimodal perception, 3D perception, and Vision-Language-Action (VLA) models. Exploring how multimodal foundation models can enable underwater robots to better perceive, understand, and interact with complex real-world environments.",
+      "Working on algorithm research and development for underwater embodied robotics.",
     role: "Algorithm Intern · Marine Embodied Intelligence",
     date: "2026 - Present",
   },
