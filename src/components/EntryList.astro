@@ -30,8 +30,7 @@ const withLogo = items.some((e) => e.logo);
               <Image
                 src={e.logo}
                 alt=""
-                widths={[48, 96, 144]}
-                sizes="48px"
+                width={48}
                 loading="lazy"
               />
             )}
@@ -54,8 +53,7 @@ const withLogo = items.some((e) => e.logo);
               class="entry-image"
               src={e.image}
               alt={e.imageAlt ?? ""}
-              widths={[420, 720, 960]}
-              sizes="(max-width: 760px) calc(100vw - 48px), 620px"
+              width={620}
               loading="lazy"
             />
           )}

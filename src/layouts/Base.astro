@@ -1,7 +1,6 @@
 ---
 // The <head> for every page: SEO tags, social cards, structured data and the
 // theme bootstrap. Pages pass in a title and their own content.
-import { getImage } from "astro:assets";
 import { site, absoluteUrl } from "../site.config.js";
 import { profile } from "../data.js";
 import "../styles/index.css";
@@ -18,20 +17,6 @@ const {
 const canonical = absoluteUrl(path);
 const assetUrl = (file) =>
   `${import.meta.env.BASE_URL}/${file}`.replace(/\/{2,}/g, "/");
-
-// Social-card scrapers need an absolute URL to an image. The avatar on the
-// page ships as WebP, but WeChat and LinkedIn do not render WebP reliably, so
-// a JPEG copy is emitted just for them. The filename carries a content hash:
-// keep the photo and the URL stays stable, so their caches keep working.
-const ogImage = await getImage({
-  src: profile.photo,
-  format: "jpeg",
-  width: 900,
-  height: 1080,
-});
-// Astro already puts `base` in front of the path it hands back, so this joins
-// against the origin only — absoluteUrl() would prepend `base` a second time.
-const ogImageUrl = new URL(ogImage.src, site.url).href;
 
 // With `theme.default: "system"` the attribute is left off and the inline
 // script below fills it in from the visitor's OS setting or their saved
@@ -62,7 +47,6 @@ const needsThemeScript = site.theme.default === "system" || site.theme.toggle;
     <meta property="og:title" content={title} />
     <meta property="og:description" content={socialDescription} />
     <meta property="og:url" content={canonical} />
-    <meta property="og:image" content={ogImageUrl} />
     <meta property="og:locale" content={site.locale} />
     {
       site.localeAlternate && (
@@ -72,7 +56,6 @@ const needsThemeScript = site.theme.default === "system" || site.theme.toggle;
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={socialDescription} />
-    <meta name="twitter:image" content={ogImageUrl} />
 
     {/* Structured data: states plainly to search engines and AI assistants
         who this is, where they are, and what they work on. */}
